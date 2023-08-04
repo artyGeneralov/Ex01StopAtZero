@@ -12,12 +12,13 @@ public class PlayerMovement : MonoBehaviour
     Color movingColor = Color.green;
     Color stoppingColor = Color.yellow;
     Color deadColor = Color.red;
-
+    Color victoryColor = Color.magenta;
     private SpriteRenderer renderer;
     private float speed, lastPressTime;
     private KeyCode lastKey;
     private bool isAlive;
     private bool canMove;
+    private bool hasWon = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -31,6 +32,13 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if (hasWon)
+        {
+            setColor(victoryColor);
+
+        }
+
         if (!canMove)
             return;
         calculateFriction();
@@ -64,12 +72,12 @@ public class PlayerMovement : MonoBehaviour
          
         if (speed == 0)
         {
-            renderer.color = stoppingColor;
+            setColor(stoppingColor);
 
         }
         else
         {
-            renderer.color = movingColor;
+            setColor(movingColor);
         }
 
         transform.Translate(Vector3.up * speed * Time.deltaTime);
@@ -90,14 +98,34 @@ public class PlayerMovement : MonoBehaviour
     }
     public void killPlayer()
     {
-        isAlive = false;
         setMove(false);
-        renderer.color = deadColor;
+        isAlive = false;
+        setColor(deadColor);
+    }
+
+    void setColor(Color color)
+    {
+        renderer.color = color;
     }
 
     public void setMove(bool move)
     {
+        if (!isAlive)
+            return;
         canMove = move;
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        Debug.Log("Player Entered");
+        if (other.tag == "FinishLine")
+            hasWon = true;
+    }
+
+    void victory()
+    {
+        setMove(false);
+        setColor(victoryColor);
     }
 
 }
