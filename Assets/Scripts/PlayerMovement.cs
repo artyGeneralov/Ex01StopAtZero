@@ -9,17 +9,29 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float friction = 0.9f;
     [SerializeField] private float maxFriction = 0.997f;
     [SerializeField] private float minFriction = 0.8f;
+    [SerializeField] private float finalStoppingSpeed = 1.01f;
+    [SerializeField] GameMng gameManager;
+    enum States
+    {
+        ForceStopped,
+        Stopped,
+        Moving,
+        Victory,
+        Done
+    }
     Color movingColor = Color.green;
     Color stoppingColor = Color.yellow;
     Color deadColor = Color.red;
     Color victoryColor = Color.magenta;
+    Color currentColor;
     private SpriteRenderer renderer;
     private float speed, lastPressTime;
     private KeyCode lastKey;
     private bool isAlive;
-    private bool canMove;
-    private bool hasWon = false;
+    private bool won = false;
     // Start is called before the first frame update
+    States curState;
+
     void Start()
     {
         isAlive = true;
@@ -27,22 +39,44 @@ public class PlayerMovement : MonoBehaviour
         lastKey = 0f;
         lastKey = KeyCode.A;
         renderer = GetComponent<SpriteRenderer>();
+        curState = States.Stopped;
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        if (hasWon)
+        
+        
+        switch (curState)
         {
-            setColor(victoryColor);
-
+            case States.Stopped:
+                setColor(stoppingColor);
+                playerMovementCotroller();
+                break;
+            case States.Moving:
+                setColor(movingColor);
+                playerMovementCotroller();
+                break;
+            case States.Victory:
+                setColor(victoryColor);
+                victory();
+                break;
+            case States.Done:
+                break;
         }
 
-        if (!canMove)
+    }
+
+    void playerMovementCotroller()
+    {
+
+        if (won)
             return;
         calculateFriction();
-
+        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D))
+        {
+            curState = States.Moving;
+        }
 
         // Player Movement by alternating A & D
         if (Input.GetKeyDown(KeyCode.A) && lastKey == KeyCode.D)
@@ -68,25 +102,23 @@ public class PlayerMovement : MonoBehaviour
         {
             speed *= friction;
         }
-        if (speed < 0.007f) speed = 0;
-         
-        if (speed == 0)
-        {
-            setColor(stoppingColor);
+        if (speed < 0.007f && (Time.time - lastPressTime > 0.5f)) speed = 0f;
 
-        }
-        else
+        if (speed == 0f && !hasWon())
         {
-            setColor(movingColor);
+            curState = States.Stopped;
+        }
+        else if(speed != 0f && !hasWon())
+        {
+            curState = States.Moving;
         }
 
         transform.Translate(Vector3.up * speed * Time.deltaTime);
-
     }
 
     void calculateFriction()
     {
-        float logSpeed = Mathf.Log10(speed+1);
+        float logSpeed = Mathf.Log10(speed + 1);
         friction = minFriction + (maxFriction - minFriction) * logSpeed;
         friction = Mathf.Clamp(friction, minFriction, maxFriction);
     }
@@ -105,27 +137,47 @@ public class PlayerMovement : MonoBehaviour
 
     void setColor(Color color)
     {
-        renderer.color = color;
+        if (currentColor != color)
+            renderer.color = color;
+        currentColor = color;
     }
 
     public void setMove(bool move)
     {
-        if (!isAlive)
+        if (isAlive == false)
             return;
-        canMove = move;
+        if (move == false)
+            curState = States.ForceStopped;
+        else
+            curState = curState == States.ForceStopped ? States.Stopped : curState;
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Player Entered");
         if (other.tag == "FinishLine")
-            hasWon = true;
+        {
+            setMove(false);
+            curState = States.Victory;
+        }
+        
     }
 
     void victory()
     {
-        setMove(false);
-        setColor(victoryColor);
+        // notify Manager
+        gameManager.notifyOfVictory(gameObject);
+
+        speed /= finalStoppingSpeed;
+        transform.Translate(Vector3.up * speed * Time.deltaTime);
+        if (speed == 0)
+            curState = States.Done;
+    }
+
+    public bool hasWon()
+    {
+        if (curState >= States.Victory)
+            return true;
+        return false;
     }
 
 }
