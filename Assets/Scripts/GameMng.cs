@@ -2,6 +2,7 @@ using System.Collections;
 using System.Text;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameMng : MonoBehaviour
 {
@@ -12,10 +13,13 @@ public class GameMng : MonoBehaviour
         COUNTING_HIDDEN,
         COUNTING_FINAL,
         EVALUATE_MOVEMENT,
-        EVALUATION
+        EVALUATION,
+        VICTORY_SCREEN
     }
     [SerializeField] GameObject enemyPrefab;
     [SerializeField] TMPro.TextMeshProUGUI victoryTextBox;
+    [SerializeField] TMPro.TextMeshProUGUI guideTextBox;
+    [SerializeField] TMPro.TextMeshProUGUI smallGuideTextBox;
     int numberOfEnemies = 10;
     [SerializeField] float spaceBetweenEnemies = 1f;
     float initialX = -8f;
@@ -23,13 +27,14 @@ public class GameMng : MonoBehaviour
     PlayerMovement playerMovement;
     List<GameObject> listOfEnemies;
     List<GameObject> listOfWinners;
+    [SerializeField] GameObject restartButton;
     int numberOfWinners;
     int maxNumberOfWinners = 2;
 
     float yOfEnemy = -4.64f;
     bool isUpdateReady = false;
     States currentState;
-    // Start is called before the first frame update
+
     void Start()
     {
         // sets random times
@@ -44,15 +49,21 @@ public class GameMng : MonoBehaviour
         forAllEnemies(script => script.setMoving(false));
         // Instantiate all enemies
         StartCoroutine(DelayedStart());
+        guideTextBox.alpha = 1f;
+        smallGuideTextBox.alpha = 1f;
 
 
     }
+
+
 
     private IEnumerator DelayedStart()
     {
         yield return new WaitForSeconds(3);
         StartCoroutine(setTimeWhenReady());
         isUpdateReady = true;
+        guideTextBox.alpha = 0.1f;
+        smallGuideTextBox.alpha = 0f;
     }
 
     private IEnumerator setTimeWhenReady()
@@ -65,9 +76,10 @@ public class GameMng : MonoBehaviour
         setNewTime();
     }
 
-    // Update is called once per frame
     void Update()
     {
+        if (currentState == States.VICTORY_SCREEN)
+            return;
         if(numberOfWinners >= maxNumberOfWinners)
         {
             //victory screen
@@ -121,6 +133,7 @@ public class GameMng : MonoBehaviour
     void victoryScreen()
     {
         // kill everyone who didnt win yet
+        currentState = States.VICTORY_SCREEN;
         killAllMoving();
         killAllStanding();
         // create victory text
@@ -141,7 +154,9 @@ public class GameMng : MonoBehaviour
         }
         victoryTextBox.text = victoryText.ToString();
         victoryTextBox.alpha = 1f;
-        
+
+
+        Instantiate(restartButton);
     }
 
 
@@ -229,6 +244,12 @@ public class GameMng : MonoBehaviour
             listOfWinners.Add(winner);
             numberOfWinners++;
         }
+    }
+
+    public void restart()
+    {
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(currentSceneIndex);
     }
 
 }

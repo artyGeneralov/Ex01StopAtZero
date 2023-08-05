@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8440044385193488537}
   - component: {fileID: 1921730328706977725}
+  - component: {fileID: 6129611978587914431}
+  - component: {fileID: 1908135466404275845}
   m_Layer: 0
   m_Name: RestartBtn
   m_TagString: Untagged
@@ -85,6 +87,38 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &6129611978587914431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1146095959595683571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 612b314fadc53624081be068095991ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
+  defaultColor: {r: 0.73135453, g: 0.8962264, b: 0.82582825, a: 1}
+  hoverColor: {r: 0.6232645, g: 0.8867924, b: 0.7764784, a: 1}
+  pressedColor: {r: 0.45109472, g: 0.8773585, b: 0.69921845, a: 1}
+--- !u!58 &1908135466404275845
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1146095959595683571}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
 --- !u!1 &7045876276226926902
 GameObject:
   m_ObjectHideFlags: 0

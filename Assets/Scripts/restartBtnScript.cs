@@ -4,15 +4,40 @@ using UnityEngine;
 
 public class restartBtnScript : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [SerializeField] GameMng gameManager;
+    new SpriteRenderer renderer;
+    [SerializeField] Color defaultColor, hoverColor, pressedColor;
+    [SerializeField] float positionX = 0f, positionY= -3f;
+
     void Start()
     {
-        
+        transform.position = new Vector3(positionX, positionY, transform.position.z);
+        renderer = GetComponent<SpriteRenderer>();
+        gameManager = FindObjectOfType<GameMng>();
+        renderer.color = defaultColor;
     }
 
-    // Update is called once per frame
-    void Update()
+
+
+
+    private void OnMouseEnter()
     {
-        
+        Debug.Log("Enter");
+        renderer.color = hoverColor;
+    }
+
+    private void OnMouseExit()
+    {
+        renderer.color = defaultColor;
+    }
+
+    private void OnMouseDown()
+    {
+        renderer.color = pressedColor;
+    }
+    private void OnMouseUp()
+    {
+        renderer.color = hoverColor;
+        gameManager.restart();
     }
 }

@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseSpeed: 0.4
-  speedDecrease: 0.0013
+  speedDecrease: 0.0017
   idText: {fileID: 6816065356574182924}
   maxSpeed: 1
   speedEpsilon: 0.000015

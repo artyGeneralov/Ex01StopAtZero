@@ -7,21 +7,30 @@ public class TimeTextManager : MonoBehaviour
     public TMPro.TextMeshProUGUI txt;
     int curTime;
     float lastTime;
-    // Start is called before the first frame update
+    Color currentColor;
+    [SerializeField] Color timerColor, goColor, startColor;
+
     void Start()
     {
         curTime = 0;
         lastTime = Time.time;
-        displayTime();
-        showClock(false);
+        displayStartMessage();
+        setColor(startColor);
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         if (curTime != 0)
             tick();
 
+    }
+
+    void setColor(Color c)
+    {
+        if (currentColor != c)
+            currentColor = txt.color = c;
+            
     }
 
     void tick()
@@ -49,14 +58,33 @@ public class TimeTextManager : MonoBehaviour
     void displayTime()
     {
         txt.text = "Time: " + curTime;
+        setColor(timerColor);
+    }
+
+    void displayGoText()
+    {
+        setColor(goColor);
+        txt.text = "GO!";
+    }
+    
+    void displayStartMessage()
+    {
+        txt.text = "Get Ready";
     }
 
     public void showClock(bool show)
     {
         if (show == false)
-            txt.alpha = 0.1f;
+        {
+            displayGoText();
+            txt.alpha = 0.8f;
+
+        }
         else
+        {
+            displayTime();
             txt.alpha = 1f;
+        }
     }
     
 }

@@ -35,7 +35,7 @@ public class EnemyMovement : MonoBehaviour
     }
     State curState;
 
-    // Start is called before the first frame update
+
     void Start()
     {
         gameManager = FindObjectOfType<GameMng>();
@@ -55,7 +55,7 @@ public class EnemyMovement : MonoBehaviour
         idText.GetComponent<TMPro.TextMeshPro>().text = this.id.ToString();
     }
 
-    // Update is called once per frame
+
     void Update()
     {
 

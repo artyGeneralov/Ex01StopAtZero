@@ -29,7 +29,7 @@ public class PlayerMovement : MonoBehaviour
     private KeyCode lastKey;
     private bool isAlive;
     private bool won = false;
-    // Start is called before the first frame update
+
     States curState;
 
     void Start()
@@ -42,7 +42,7 @@ public class PlayerMovement : MonoBehaviour
         curState = States.Stopped;
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         
